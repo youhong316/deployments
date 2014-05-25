@@ -7,8 +7,7 @@ AWS_ENV=testing
 hostnames=$(aws ec2 describe-instances \
   --filters "Name=tag:environment,Values=$AWS_ENV" \
   --query 'Reservations[*].[Instances[0].State.Name,Instances[0].PublicDnsName]' \
-  --output text  | awk '{print $2}')
-  # --output text  | grep running | awk '{print $2}' \
+  --output text  | grep running | awk '{print $2}')
 
 # just print the first one
 first_hostname=$(echo $hostnames | awk '{print $1}')
