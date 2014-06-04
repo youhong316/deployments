@@ -1,7 +1,40 @@
 #!/bin/bash
+# Argument = -e AWS_ENV -u EC2_INSTANCE_USER
 
-AWS_ENV=${1:-testing}
-EC2_INSTANCE_USER=${2:-ubuntu}
+usage()
+{
+cat << EOF
+usage: $0 options
+
+This script ssh's you into an EC2 instance.
+
+OPTIONS:
+   -e      The AWS environment.
+   -u      The EC2 instance username.
+EOF
+}
+
+AWS_ENV=
+EC2_INSTANCE_USER=
+
+while getopts “e:u:” OPTION
+do
+     case $OPTION in
+         e)
+             AWS_ENV=$OPTARG
+             ;;
+         u)
+             EC2_INSTANCE_USER=$OPTARG
+             ;;
+         ?)
+             usage
+             exit
+             ;;
+     esac
+done
+
+AWS_ENV=${AWS_ENV:-testing}
+EC2_INSTANCE_USER=${EC2_INSTANCE_USER:-ubuntu}
 
 hostnames_string=$(aws ec2 describe-instances \
   --filters "Name=tag:environment,Values=$AWS_ENV" \
