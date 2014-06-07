@@ -36,11 +36,6 @@ done
 AWS_ENV=${AWS_ENV:-testing}
 EC2_INSTANCE_USER=${EC2_INSTANCE_USER:-ubuntu}
 
-# hostnames_string=$(aws ec2 describe-instances \
-#   --filters "Name=tag:environment,Values=$AWS_ENV" \
-#   --query 'Reservations[*].[Instances[0].State.Name,Instances[0].PublicDnsName]' \
-#   --output text  | grep running | awk '{print $2}')
-
 hostnames_string=$(aws ec2 describe-instances \
   --filters "Name=tag:environment,Values=$AWS_ENV" \
   --query 'Reservations[*].[Instances[0].State.Name,Instances[0].PublicIpAddress]' \
@@ -58,7 +53,6 @@ echo "Finding instances from the $AWS_ENV environment"
 if [ -n "$hostnames" ]; then
 
   if [ "${#hostnames[@]}" -eq 1 ] ; then
-    echo "$EC2_INSTANCE_USER@${hostnames[0]}"
     ssh $EC2_INSTANCE_USER@${hostnames[0]}
   fi
 
